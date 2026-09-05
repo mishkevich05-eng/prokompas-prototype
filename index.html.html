@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ПроКомпас — Карьерный навигатор</title>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=gY5nryb7PqkWmQMzEwBBSeAl2IbPVo3mJePF3CVcYhi9ECph3eX8UkrJhllL3MdVLRdGyRrVBEEFQaGzgGmgSIlBF3BX-j7uhIQ-Jvz0oWSKt3F9dZiZ1195BdxH2IltXD21_i3pIxtnbCLWIWB4h0b602atq4SrDYyxvFXSer8HFC7Wxt0qOFyHp-2WmN6X42B8gjKSpRA3kB1CaqrfmUoN5OHxWU9_BOWkdJ2fMzBwiNr3JCsKlKnHFZxHW6haEmFwKqzhtOIeXurcQ6Mtw3lJ1YSY8NCZoU2TDOb6yEZBRZrjxHOSgcR_2ZVjQwegV5cDgM_v6QZAcuFdQwlNU5dAvy_RRXiSJ3dqT6JlNNtJMm3e0ZECSHaz_jx1M9Y-NstpXsGEEqCYDPmWIR3hB3Rv7u2DWfLZ-MNrg6jzBjoRqr3Y2AzM-d5CExpf3OIMxeeMxHWNrztMtWFdg2D3UbViry9SfEmJcYw3jfHAGxCKdIXf747guq3DIN7rSF1Y7LnhwOS18cBbS76gmHS1Ak4azGYU9eOzVg7ZrgyncfhBlgmrY6gfhvsQBj-9O0KOCHnpo4jgDR-lW-eC7v6OVSn3s9LB3-mEd-xeoDYx0IePgF8S4DYkM_MnBraIVH0NeXuXOHrgS1ivJY1hD37fwWtD3FpSN0ZWTtQJ_7oOHB0" charset="UTF-8"></script><style>
+  :root {
+    --primary: #2A9D8F;
+    --accent: #264653;
+    --bg: #F9F9F9;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --text-secondary: #666666;
+    --border: #E5E5E5;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --nav-height: 72px;
+  }
+  .dark-theme {
+    --bg: #0F0F0F;
+    --surface: #1C1C1E;
+    --text: #FFFFFF;
+    --text-secondary: #A1A1A6;
+    --border: #2C2C2E;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    background: var(--bg);
+    padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 16px);
+  }
+  /* Typography */
+  h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 16px; }
+  p { margin: 0; line-height: 1.5; }
+  .text-secondary { color: var(--text-secondary); font-size: 14px; }
+  .text-primary { color: var(--primary); font-weight: 600; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 14px 24px; border-radius: var(--radius-sm);
+    border: none; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: transform .1s, opacity .2s; width: 100%;
+    background: var(--primary); color: #fff;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-outline {
+    background: transparent; border: 1.5px solid var(--border); color: var(--text);
+  }
+  .btn-ghost { background: transparent; color: var(--primary); width: auto; padding: 8px 12px; }
+  .btn-sm { padding: 10px 16px; font-size: 14px; width: auto; }
+
+  /* Cards */
+  .card {
+    background: var(--surface); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 16px; margin-bottom: 12px;
+  }
+  .card-flat {
+    background: var(--surface); border-radius: var(--radius-sm);
+    border: 1px solid var(--border); padding: 14px;
+  }
+
+  /* Chips */
+  .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(42,157,143,0.12); color: var(--primary);
+    padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  }
+  .chip .chip-close { cursor: pointer; font-size: 16px; line-height: 1; }
+
+  /* Form elements */
+  .input {
+    width: 100%; padding: 12px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+    font-size: 15px; outline: none; transition: border-color .2s;
+    margin-top: 6px;
+  }
+  .input:focus { border-color: var(--primary); }
+  .label { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 12px; display: block; }
+  .checkbox-row { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-size: 15px; cursor: pointer; }
+  .checkbox-row input { width: 20px; height: 20px; accent-color: var(--primary); }
+
+  /* Progress */
+  .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width .6s ease; }
+
+  /* Screens */
+  .screen { display: none; animation: fadeIn .25s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Onboarding */
+  .onboarding {
+    position: fixed; inset: 0; z-index: 1000; background: var(--bg);
+    display: flex; flex-direction: column;
+  }
+  .onboarding-step { flex: 1; display: none; flex-direction: column; padding: 24px; animation: fadeIn .3s ease; }
+  .onboarding-step.active { display: flex; }
+  .onboarding-step h2 { margin-bottom: 8px; }
+  .onboarding-step .subtitle { color: var(--text-secondary); margin-bottom: 24px; font-size: 15px; }
+  .role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .role-card {
+    background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius);
+    padding: 24px 16px; text-align: center; cursor: pointer; transition: all .2s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .role-card .emoji { font-size: 32px; }
+  .role-card .title { font-weight: 700; font-size: 15px; }
+  .role-card .desc { font-size: 12px; color: var(--text-secondary); }
+  .role-card.selected { border-color: var(--primary); background: rgba(42,157,143,0.06); }
+  .ob-footer { padding: 24px; border-top: 1px solid var(--border); background: var(--surface); }
+  .step-indicator { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: .3s; }
+  .step-dot.active { background: var(--primary); width: 24px; border-radius: 4px; }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px; height: calc(var(--nav-height) + var(--safe-bottom));
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center;
+    padding-bottom: var(--safe-bottom); z-index: 500;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  }
+  .dark-theme .bottom-nav { background: rgba(28,28,30,0.92); }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 0; color: var(--text-secondary); font-size: 11px; font-weight: 500;
+    cursor: pointer; border: none; background: none; transition: color .2s;
+  }
+  .nav-item .icon { font-size: 22px; line-height: 1; }
+  .nav-item.active { color: var(--primary); }
+
+  /* Header */
+  .screen-header { padding: 20px 16px 8px; }
+  .screen-header h1 { margin-bottom: 4px; }
+
+  /* Horizontal scroll */
+  .h-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .h-scroll::-webkit-scrollbar { display: none; }
+  .h-scroll .card { min-width: 280px; scroll-snap-align: start; margin-bottom: 0; }
+
+  /* Accordion */
+  .accordion-item { border-bottom: 1px solid var(--border); }
+  .accordion-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; cursor: pointer; font-weight: 600; font-size: 15px;
+  }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; padding: 0 0 0 0; }
+  .accordion-body.open { max-height: 800px; padding-bottom: 14px; }
+  .accordion-icon { transition: transform .3s; color: var(--text-secondary); }
+  .accordion-item.open .accordion-icon { transform: rotate(180deg); }
+
+  /* Gap Analysis Chart */
+  .gap-chart { width: 160px; height: 160px; margin: 16px auto; position: relative; }
+  .gap-chart svg { transform: rotate(-90deg); }
+  .gap-chart .chart-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .gap-chart .chart-label { font-size: 12px; color: var(--text-secondary); }
+  .gap-chart .chart-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+
+  /* Salary bars */
+  .salary-bar-group { display: flex; align-items: flex-end; gap: 12px; height: 140px; margin: 16px 0; }
+  .salary-bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .salary-bar { width: 100%; border-radius: 8px 8px 0 0; background: var(--primary); opacity: .3; transition: .6s; }
+  .salary-bar.active { opacity: 1; }
+  .salary-bar-label { font-size: 12px; color: var(--text-secondary); }
+  .salary-bar-value { font-size: 13px; font-weight: 700; }
+
+  /* Line chart SVG */
+  .line-chart { width: 100%; height: 160px; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,0.4);
+    display: none; align-items: flex-end; justify-content: center;
+    opacity: 0; transition: opacity .3s;
+  }
+  .modal-overlay.show { display: flex; opacity: 1; }
+  .modal-sheet {
+    background: var(--surface); width: 100%; max-width: 480px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    max-height: 90vh; overflow-y: auto;
+    transform: translateY(100%); transition: transform .3s ease;
+    padding: 24px 20px calc(24px + var(--safe-bottom));
+  }
+  .modal-overlay.show .modal-sheet { transform: translateY(0); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close { font-size: 24px; cursor: pointer; color: var(--text-secondary); line-height: 1; }
+
+  /* Test */
+  .test-option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+    margin-bottom: 10px; cursor: pointer; transition: .2s;
+  }
+  .test-option:hover, .test-option.selected { border-color: var(--primary); background: rgba(42,157,143,0.06); }
+  .test-option .opt-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .test-option.selected .opt-letter { background: var(--primary); color: #fff; }
+
+  /* Toggle */
+  .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .toggle { width: 50px; height: 30px; border-radius: 15px; background: var(--border); position: relative; cursor: pointer; transition: .3s; flex-shrink: 0; }
+  .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: .3s; }
+  .toggle.on { background: var(--primary); }
+  .toggle.on::after { left: 23px; }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 32px; text-align: center; color: var(--text-secondary); margin: 16px 0;
+    transition: .2s;
+  }
+  .upload-zone.active { border-color: var(--primary); background: rgba(42,157,143,0.06); color: var(--primary); }
+  .upload-zone .upload-icon { font-size: 40px; margin-bottom: 8px; }
+
+  /* Misc */
+  .badge {
+    display: inline-block; padding: 4px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+  }
+  .badge-high { background: #FEE2E2; color: #DC2626; }
+  .badge-medium { background: #FEF3C7; color: #D97706; }
+  .badge-low { background: #E0F2FE; color: #0284C7; }
+  .section-title { font-size: 17px; font-weight: 700; margin: 20px 16px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .section-title a { font-size: 14px; color: var(--primary); text-decoration: none; font-weight: 600; }
+  .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px; }
+  .quick-action {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    background: var(--surface); border-radius: var(--radius-sm); padding: 14px 8px;
+    box-shadow: var(--shadow); cursor: pointer; border: none; color: var(--text);
+    font-size: 12px; font-weight: 600;
+  }
+  .quick-action .icon { font-size: 24px; }
+  .vacancy-card .vacancy-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .vacancy-card .vacancy-company { color: var(--text-secondary); font-size: 13px; margin-bottom: 10px; }
+  .vacancy-card .vacancy-footer { display: flex; justify-content: space-between; align-items: center; }
+  .vacancy-card .salary { font-weight: 700; color: var(--primary); font-size: 15px; }
+  .vacancy-card .actions { display: flex; gap: 8px; }
+  .btn-xs { padding: 6px 12px; font-size: 13px; border-radius: 8px; width: auto; }
+
+  .plan-check { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 15px; }
+  .plan-check .check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; color: transparent; flex-shrink: 0; }
+  .plan-check.done .check { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+  .recommendation-card {
+    background: linear-gradient(135deg, rgba(42,157,143,0.15) 0%, rgba(38,70,83,0.08) 100%);
+    border-left: 4px solid var(--primary);
+  }
+
+  .priority-high { color: #DC2626; font-weight: 700; }
+  .priority-medium { color: #D97706; font-weight: 700; }
+  .priority-low { color: #0284C7; font-weight: 700; }
+
+  .ai-tip {
+    background: rgba(42,157,143,0.08); border-radius: var(--radius-sm); padding: 12px; margin-top: 12px; font-size: 14px;
+    border: 1px solid rgba(42,157,143,0.2);
+  }
+  .ai-tip-header { display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+
+  .profile-section { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .profile-section .icon { font-size: 22px; width: 28px; text-align: center; }
+  .profile-section .content { flex: 1; }
+  .profile-section .content .title { font-weight: 600; font-size: 15px; }
+  .profile-section .content .desc { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+  .profile-section .arrow { color: var(--text-secondary); }
+
+  .avatar-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 12px; }
+  .avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 32px; overflow: hidden; }
+  .avatar-edit {
+    position: absolute; bottom: 0; right: 0; width: 28px; height: 28px;
+    background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid var(--surface); cursor: pointer;
+  }
+
+  .pro-banner {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+    color: #fff; border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .pro-banner .pro-title { font-weight: 700; font-size: 16px; }
+  .pro-banner .pro-desc { font-size: 13px; opacity: .9; margin-top: 4px; }
+  .pro-banner button { background: #fff; color: var(--accent); border: none; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+  .slider-wrap { margin: 16px 0; }
+  .slider-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+  input[type=range] { width: 100%; accent-color: var(--primary); }
+
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+    background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 24px;
+    font-size: 14px; font-weight: 500; z-index: 1100; opacity: 0; transition: all .4s ease;
+    pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  .filter-chips { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px; }
+  .filter-chip {
+    padding: 8px 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border);
+    font-size: 13px; white-space: nowrap; cursor: pointer; color: var(--text);
+  }
+  .filter-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  .skill-tag-bar { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+  .skill-tag-bar .tag-name { width: 100px; font-size: 14px; flex-shrink: 0; }
+  .skill-tag-bar .tag-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .skill-tag-bar .tag-fill { height: 100%; background: var(--primary); border-radius: 4px; }
+  .skill-tag-bar .tag-pct { width: 40px; text-align: right; font-size: 13px; font-weight: 600; }
+
+  .comparison-ring { width: 120px; height: 120px; margin: 0 auto; position: relative; }
+</style>
+</head>
+<body>
+<div class="app-container" id="app">
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ONBOARDING -->
+  <div class="onboarding" id="onboarding" style="display:none;">
+    <div style="flex:1; position:relative; overflow:hidden;">
+      <!-- Step 1 -->
+      <div class="onboarding-step active" id="ob-step-1">
+        <div style="margin-top: 40px;">
+          <h1>Добро пожаловать в ПроКомпас!</h1>
+          <p class="subtitle">Кем вы являетесь?</p>
+          <div class="role-cards">
+            <div class="role-card" onclick="selectRole('student')" data-role="student">
+              <div class="emoji">👩‍🎓</div>
+              <div class="title">Школьник / Студент</div>
+              <div class="desc">Начинаю карьерный путь</div>
+            </div>
+            <div class="role-card" onclick="selectRole('specialist')" data-role="specialist">
+              <div class="emoji">👨‍💼</div>
+              <div class="title">Действующий специалист</div>
+              <div class="desc">Развиваюсь или меняю сферу</div>
+            </div>
+          </div>
+          <p class="text-secondary" style="text-align:center; font-size:13px;">Выбор определит режим рекомендаций</p>
+        </div>
+      </div>
+      <!-- Step 2 -->
+      <div class="onboarding-step" id="ob-step-2">
+        <div style="margin-top: 40px;">
+          <h1>Ваша цель</h1>
+          <p class="subtitle">Что вы хотите достичь?</p>
+          <div id="goals-student" style="display:none;">
+            <label class="checkbox-row"><input type="checkbox" value="profession"> Выбрать профессию</label>
+            <label class="checkbox-row"><input type="checkbox" value="internship"> Найти стажировку</label>
+            <label class="checkbox-row"><input type="checkbox" value="resume"> Составить резюме</label>
+          </div>
+          <div id="goals-specialist" style="display:none;">
+            <label class="checkbox-row"><input type="checkbox" value="salary"> Повысить зарплату</label>
+            <label class="checkbox-row"><input type="checkbox" value="sphere"> Сменить сферу</label>
+            <label class="checkbox-row"><input type="checkbox" value="skills"> Прокачать навыки</label>
+            <label class="checkbox-row"><input type="checkbox" value="interview"> Подготовиться к собеседованию</label>
+          </div>
+        </div>
+      </div>
+      <!-- Step 3 -->
+      <div class="onboarding-step" id="ob-step-3">
+        <div style="margin-top: 40px;">
+          <h1>Загрузите резюме</h1>
+          <p class="subtitle">Или заполните позже вручную</p>
+          <div class="upload-zone" id="upload-zone" onclick="simulateUpload()">
+            <div class="upload-icon">📄</div>
+            <div style="font-weight:600; color:var(--text); margin-bottom:4px;">Загрузить резюме (PDF/DOCX)</div>
+            <div style="font-size:13px;">AI извлечёт данные автоматически</div>
+          </div>
+          <button class="btn btn-outline" onclick="skipUpload()">Заполнить вручную</button>
+          <label class="checkbox-row" style="margin-top:16px;">
+            <input type="checkbox" id="consent-check">
+            <span>Согласие на обработку персональных данных</span>
+          </label>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:4px; padding-left:30px;">
+            <a href="#" style="color:var(--primary);">Пользовательское соглашение</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="ob-footer">
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+      </div>
+      <button class="btn" id="ob-btn" onclick="nextObStep()" disabled>Далее</button>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="screen-header">
+      <h1 id="greeting">Здравствуйте, Гость!</h1>
+      <p class="text-secondary">Ваш карьерный навигатор</p>
+    </div>
+    <div style="padding: 0 16px;">
+      <div class="card" style="display:flex; align-items:center; gap:12px;">
+        <div style="font-size:24px;">⚠️</div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:15px;">Резюме не заполнено</div>
+          <div class="text-secondary" style="font-size:13px;">Заполните профиль для персональных рекомендаций</div>
+        </div>
+        <button class="btn btn-sm" style="width:auto;" onclick="navTo('resume')">Заполнить</button>
+      </div>
+
+      <div class="card recommendation-card">
+        <div style="font-weight:700; margin-bottom:6px;">🔥 Ваш главный разрыв компетенций</div>
+        <p class="text-secondary" style="font-size:14px; margin-bottom:10px;">Вам не хватает навыка "Python" для позиции Junior Python Developer</p>
+        <button class="btn btn-ghost" style="padding-left:0;" onclick="navTo('resume')">Подробнее →</button>
+      </div>
+
+      <div class="quick-actions">
+        <button class="quick-action" onclick="navTo('resume')">
+          <span class="icon">📄</span>
+          <span>Заполнить резюме</span>
+        </button>
+        <button class="quick-action" onclick="navTo('resume', 'gap')">
+          <span class="icon">📊</span>
+          <span>Gap-анализ</span>
+        </button>
+        <button class="quick-action" onclick="openModal('salary-modal')">
+          <span class="icon">📈</span>
+          <span>Прогноз зарплаты</span>
+        </button>
+        <button class="quick-action" onclick="openModal('courses-modal')">
+          <span class="icon">🎓</span>
+          <span>Курсы</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <span>Актуальные вакансии</span>
+      <a onclick="navTo('vacancies')">Все вакансии →</a>
+    </div>
+    <div class="h-scroll" style="padding: 0 16px;">
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Junior Python Developer</div>
+        <div class="vacancy-company">TechStart • Минск</div>
+        <div class="vacancy-footer">
+          <span class="salary">2500 BYN</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Data Analyst</div>
+        <div class="vacancy-company">DataPro • удалённо</div>
+        <div class="vacancy-footer">
+          <span class="salary">по договорённости</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Frontend Developer</div>
+        <div class="vacancy-company">WebCraft • Минск</div>
+        <div class="vacancy-footer">
+          <span class="salary">3200 BYN</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title"><span>План развития</span></div>
+    <div class="card" style="margin: 0 16px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-weight:600;">Завершено 3 из 10 шагов</span>
+        <span style="font-size:13px; color:var(--primary); font-weight:700;">30%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+      <div style="margin-top:12px;">
+        <div class="plan-check done"><div class="check">✓</div><span>Загрузить фото</span></div>
+        <div class="plan-check"><div class="check"></div><span>Пройти тест на профориентацию</span></div>
+        <div class="plan-check"><div class="check"></div><span>Добавить навык "SQL" в резюме</span></div>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:8px; padding-left:0;" onclick="openModal('test-modal')">Изменить план</button>
+    </div>
+  </div>
+
+  <!-- RESUME -->
+  <div class="screen" id="screen-resume">
+    <div class="screen-header">
+      <h1>Резюме</h1>
+      <p class="text-secondary">Конструктор и анализ навыков</p>
+    </div>
+    <div style="padding: 0 16px;">
+      <div style="display:flex; background:var(--surface); border-radius:var(--radius-sm); padding:4px; margin-bottom:16px; box-shadow:var(--shadow);">
+        <button class="btn btn-sm tab-btn" style="flex:1;" data-tab="constructor" onclick="switchResumeTab('constructor')">Конструктор</button>
+        <button class="btn btn-sm tab-btn btn-outline" style="flex:1;" data-tab="gap" onclick="switchResumeTab('gap')">Gap-анализ</button>
+      </div>
+
+      <!-- Constructor -->
+      <div id="tab-constructor">
+        <div class="card" style="padding:0 16px;">
+          <div class="accordion-item open">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Личная информация</span>
+              <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-body open">
+              <div style="text-align:center; padding: 10px 0;">
+                <div class="avatar-wrap">
+                  <div class="avatar" id="resume-avatar">👤</div>
+                  <div class="avatar-edit" onclick="showToast('Выбор фото')">📷</div>
+                </div>
+              </div>
+              <label class="label">ФИО</label>
+              <input class="input" id="input-name" placeholder="Иванов Иван Иванович" oninput="updateName()">
+              <label class="label">Город</label>
+              <input class="input" placeholder="Минск">
+              <label class="label">Телефон</label>
+              <input class="input" type="tel" placeholder="+375 (XX) XXX-XX-XX">
+              <label class="label">Email</label>
+              <input class="input" type="email" placeholder="example@mail.com">
+              <label class="label">Желаемая должность</label>
+              <input class="input" placeholder="Junior Python Developer">
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Опыт работы</span>
+              <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-body">
+              <div id="experience-list"></div>
+              <button class="btn btn-outline btn-sm" style="margin-top:8px; width:100%;" onclick="addExperience()">+ Добавить место работы</button>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Образование</span>
+              <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-body">
+              <label class="label">Учебное заведение</label>
+              <input class="input" placeholder="БГУИР">
+              <label class="label">Специальность</label>
+              <input class="input" placeholder="Информационные технологии">
+              <label class="label">Год окончания</label>
+              <input class="input" placeholder="2024">
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Навыки</span>
+              <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-body">
+              <div style="display:flex; gap:8px;">
+                <input class="input" id="skill-input" placeholder="Например: Python" style="flex:1; margin-top:0;" onkeypress="if(event.key==='Enter') addSkill()">
+                <button class="btn btn-sm" style="width:auto;" onclick="addSkill()">Добавить</button>
+              </div>
+              <div class="chip-container" id="skills-container">
+                <div class="chip">Python <span class="chip-close" onclick="removeSkill(this)">×</span></div>
+                <div class="chip">SQL <span class="chip-close" onclick="removeSkill(this)">×</span></div>
+                <div class="chip">Git <span class="chip-close" onclick="removeSkill(this)">×</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Ключевые достижения</span>
+              <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-body">
+              <textarea class="input" rows="4" placeholder="Опишите ваши достижения..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-tip">
+          <div class="ai-tip-header">💡 Совет от AI</div>
+          <div style="font-size:14px; color:var(--text-secondary);">
+            Добавьте навык "Английский язык" — он требуется в 78% вакансий. В описании опыта используйте глаголы действия: разработал, внедрил.
+          </div>
+          <button class="btn btn-sm" style="margin-top:10px; width:auto;" onclick="showToast('Резюме отправлено на анализ')">Улучшить резюме</button>
+        </div>
+
+        <div style="display:flex; gap:10px; margin: 16px 0;">
+          <button class="btn btn-outline" style="flex:1;" onclick="showToast('Экспорт в PDF')">📄 Экспорт PDF</button>
+          <button class="btn" style="flex:1;" onclick="showToast('Резюме сохранено!')">💾 Сохранить</button>
+        </div>
+        <button class="btn btn-outline" style="margin-bottom:16px;" onclick="openModal('upload-modal')">📎 Загрузить существующее резюме</button>
+      </div>
+
+      <!-- Gap Analysis -->
+      <div id="tab-gap" style="display:none;">
+        <div class="card">
+          <label class="label">Целевая позиция</label>
+          <select class="input" id="gap-position" onchange="runGapAnalysis()">
+            <option>Junior Python Developer</option>
+            <option>Middle Java Developer</option>
+            <option>Data Analyst</option>
+            <option>Frontend Developer</option>
+          </select>
+          <button class="btn" style="margin-top:12px;" onclick="runGapAnalysis()">Сравнить</button>
+        </div>
+
+        <div class="card" id="gap-results" style="display:none;">
+          <div style="text-align:center; font-weight:700; margin-bottom:10px;">Ваши навыки vs Требования рынка</div>
+          <div class="gap-chart">
+            <svg viewBox="0 0 160 160" width="160" height="160">
+              <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border)" stroke-width="12"/>
+              <circle id="gap-circle-you" cx="80" cy="80" r="70" fill="none" stroke="var(--primary)" stroke-width="12" stroke-dasharray="0 440" stroke-linecap="round"/>
+              <circle id="gap-circle-market" cx="80" cy="80" r="55" fill="none" stroke="#264653" stroke-width="12" stroke-dasharray="0 346" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+            <div class="chart-center">
+              <div class="chart-label">Совпадение</div>
+              <div class="chart-value" id="gap-percent">60%</div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:center; gap:20px; margin-bottom:16px; font-size:13px;">
+            <div style="display:flex; align-items:center; gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary);display:inline-block;"></span> Ваши навыки</div>
+            <div style="display:flex; align-items:center; gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent);opacity:.4;display:inline-block;"></span> Требования</div>
+          </div>
+
+          <h3 style="margin: 16px 0 10px;">Недостающие навыки</h3>
+          <div id="missing-skills">
+            <div class="card-flat" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div>
+                <div style="font-weight:600;">Docker</div>
+                <div class="text-secondary" style="font-size:13px;">требуется в 90% вакансий</div>
+              </div>
+              <div style="text-align:right;">
+                <span class="badge badge-high">High</span>
+                <button class="btn btn-xs btn-outline" style="margin-top:6px; display:block; margin-left:auto;" onclick="openModal('courses-modal')">Узнать курс</button>
+              </div>
+            </div>
+            <div class="card-flat" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div>
+                <div style="font-weight:600;">CI/CD</div>
+                <div class="text-secondary" style="font-size:13px;">требуется в 60% вакансий</div>
+              </div>
+              <div style="text-align:right;">
+                <span class="badge badge-medium">Medium</span>
+                <button class="btn btn-xs btn-outline" style="margin-top:6px; display:block; margin-left:auto;" onclick="openModal('courses-modal')">Узнать курс</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background: linear-gradient(135deg, rgba(42,157,143,0.1) 0%, rgba(38,70,83,0.05) 100%); margin-top:16px;">
+            <div style="font-weight:700; margin-bottom:6px;">📈 Прогноз роста зарплаты</div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin: 10px 0;">
+              <div>
+                <div class="text-secondary" style="font-size:13px;">Текущая</div>
+                <div style="font-size:20px; font-weight:700;">2500 BYN</div>
+              </div>
+              <div style="font-size:24px; color:var(--primary);">→</div>
+              <div style="text-align:right;">
+                <div class="text-secondary" style="font-size:13px;">Потенциал</div>
+                <div style="font-size:20px; font-weight:700; color:var(--primary);">3500 BYN</div>
+              </div>
+            </div>
+            <div class="text-secondary" style="font-size:13px;">+40% после закрытия пробелов</div>
+          </div>
+
+          <h3 style="margin: 16px 0 10px;">Рекомендации</h3>
+          <div class="card-flat" style="font-size:14px; margin-bottom:8px;">
+            <div style="font-weight:600; margin-bottom:4px;">1. Пройти курс «Docker для начинающих»</div>
+            <div class="text-secondary">Партнёр: Stepik • Бесплатно</div>
+          </div>
+          <div class="card-flat" style="font-size:14px; margin-bottom:8px;">
+            <div style="font-weight:600; margin-bottom:4px;">2. Добавить в резюме проект с CI/CD</div>
+            <div class="text-secondary">Практический опыт повысит привлекательность</div>
+          </div>
+          <div class="card-flat" style="font-size:14px;">
+            <div style="font-weight:600; margin-bottom:4px;">3. Записаться на вебинар «Kubernetes basics»</div>
+            <div class="text-secondary">Ближайший: 15 мая, 19:00</div>
+          </div>
+
+          <button class="btn btn-outline" style="margin-top:16px;" onclick="showToast('Отчёт экспортирован в PDF')">Поделиться отчётом</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="screen" id="screen-analytics">
+    <div class="screen-header">
+      <h1>Аналитика рынка</h1>
+      <p class="text-secondary">Зарплаты, навыки и тренды</p>
+    </div>
+    <div class="filter-chips">
+      <button class="filter-chip active">Python-разработчик</button>
+      <button class="filter-chip">Java-разработчик</button>
+      <button class="filter-chip">Data Analyst</button>
+      <button class="filter-chip">Frontend</button>
+    </div>
+    <div style="padding: 0 16px;">
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:12px;">Зарплатный диапазон (Junior)</div>
+        <div class="salary-bar-group">
+          <div class="salary-bar-item">
+            <div class="salary-bar-value">1200</div>
+            <div class="salary-bar" style="height:40%"></div>
+            <div class="salary-bar-label">min</div>
+          </div>
+          <div class="salary-bar-item">
+            <div class="salary-bar-value">1800</div>
+            <div class="salary-bar active" style="height:65%"></div>
+            <div class="salary-bar-label">средняя</div>
+          </div>
+          <div class="salary-bar-item">
+            <div class="salary-bar-value">2500</div>
+            <div class="salary-bar" style="height:90%"></div>
+            <div class="salary-bar-label">max</div>
+          </div>
+        </div>
+        <div class="text-secondary" style="font-size:13px; text-align:center;">Средняя зарплата Junior Python-разработчика: <strong>1800 BYN</strong></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:12px;">ТОП-10 навыков</div>
+        <div class="skill-tag-bar"><div class="tag-name">Python</div><div class="tag-bar"><div class="tag-fill" style="width:85%"></div></div><div class="tag-pct">85%</div></div>
+        <div class="skill-tag-bar"><div class="tag-name">Django</div><div class="tag-bar"><div class="tag-fill" style="width:62%"></div></div><div class="tag-pct">62%</div></div>
+        <div class="skill-tag-bar"><div class="tag-name">PostgreSQL</div><div class="tag-bar"><div class="tag-fill" style="width:70%"></div></div><div class="tag-pct">70%</div></div>
+        <div class="skill-tag-bar"><div class="tag-name">Git</div><div class="tag-bar"><div class="tag-fill" style="width:90%"></div></div><div class="tag-pct">90%</div></div>
+        <div class="skill-tag-bar"><div class="tag-name">Docker</div><div class="tag-bar"><div class="tag-fill" style="width:55%"></div></div><div class="tag-pct">55%</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:12px;">Динамика зарплат по полугодиям</div>
+        <svg class="line-chart" viewBox="0 0 300 140" preserveAspectRatio="none">
+          <defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(42,157,143,0.3)"/><stop offset="100%" stop-color="rgba(42,157,143,0)"/></linearGradient></defs>
+          <polyline fill="none" stroke="var(--border)" stroke-width="1" points="0,20 300,20"/>
+          <polyline fill="none" stroke="var(--border)" stroke-width="1" points="0,70 300,70"/>
+          <polyline fill="none" stroke="var(--border)" stroke-width="1" points="0,120 300,120"/>
+          <polygon fill="url(#grad)" points="0,120 50,100 100,90 150,85 200,70 250,60 300,50 300,140 0,140"/>
+          <polyline fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="0,120 50,100 100,90 150,85 200,70 250,60 300,50"/>
+          <circle cx="300" cy="50" r="5" fill="var(--primary)"/>
+        </svg>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-top:8px;">
+          <span>2023-I</span><span>2023-II</span><span>2024-I</span><span>2024-II</span><span>2025-I</span>
+        </div>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <div style="font-size:40px; margin-bottom:8px;">📊</div>
+        <div style="font-weight:700; margin-bottom:6px;">Ваши навыки совпадают на 60%</div>
+        <div class="text-secondary" style="font-size:14px; margin-bottom:12px;">с рыночными требованиями для Junior Python Developer</div>
+        <button class="btn btn-sm" onclick="navTo('resume')">Улучшить резюме</button>
+      </div>
+    </div>
+    <button class="btn btn-outline" style="margin: 0 16px 16px;" onclick="showToast('Отчёт выгружен в PDF')">Выгрузить отчёт в PDF</button>
+  </div>
+
+  <!-- VACANCIES -->
+  <div class="screen" id="screen-vacancies">
+    <div class="screen-header">
+      <h1>Вакансии</h1>
+      <p class="text-secondary">Поиск и стажировки</p>
+    </div>
+    <div style="padding: 0 16px 12px;">
+      <input class="input" placeholder="🔍 Поиск по вакансиям..." style="margin-top:0;">
+    </div>
+    <div class="filter-chips">
+      <button class="filter-chip active">Все</button>
+      <button class="filter-chip">Junior</button>
+      <button class="filter-chip">Middle</button>
+      <button class="filter-chip">Удалённо</button>
+      <button class="filter-chip">Минск</button>
+    </div>
+    <div style="padding: 0 16px;">
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Junior Python Developer</div>
+        <div class="vacancy-company">TechStart • Минск • Офис/гибрид</div>
+        <div style="margin: 10px 0; font-size:13px; color:var(--text-secondary);">Python, Django, PostgreSQL, Git</div>
+        <div class="vacancy-footer">
+          <span class="salary">2500 BYN</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Data Analyst (стажировка)</div>
+        <div class="vacancy-company">DataPro • Удалённо</div>
+        <div style="margin: 10px 0; font-size:13px; color:var(--text-secondary);">SQL, Python, Pandas, Tableau</div>
+        <div class="vacancy-footer">
+          <span class="salary">по договорённости</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Frontend Developer</div>
+        <div class="vacancy-company">WebCraft • Минск</div>
+        <div style="margin: 10px 0; font-size:13px; color:var(--text-secondary);">React, TypeScript, CSS, Git</div>
+        <div class="vacancy-footer">
+          <span class="salary">3200 BYN</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+      <div class="card vacancy-card">
+        <div class="vacancy-title">Middle Java Developer</div>
+        <div class="vacancy-company">FinSoft • Минск</div>
+        <div style="margin: 10px 0; font-size:13px; color:var(--text-secondary);">Java, Spring, Docker, Kafka</div>
+        <div class="vacancy-footer">
+          <span class="salary">5000 BYN</span>
+          <div class="actions">
+            <button class="btn btn-xs btn-outline">Сохранить</button>
+            <button class="btn btn-xs" onclick="showToast('Отклик отправлен!')">Откликнуться</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="screen-header">
+      <h1>Профиль</h1>
+      <p class="text-secondary">Личный кабинет и настройки</p>
+    </div>
+    <div style="padding: 0 16px;">
+      <div class="card" style="text-align:center;">
+        <div class="avatar-wrap">
+          <div class="avatar" id="profile-avatar">👤</div>
+          <div class="avatar-edit" onclick="showToast('Выбор фото')">📷</div>
+        </div>
+        <h3 id="profile-name">Гость</h3>
+        <p class="text-secondary" id="profile-email">email@example.com</p>
+      </div>
+
+      <div class="pro-banner">
+        <div>
+          <div class="pro-title">ПроКомпас Pro</div>
+          <div class="pro-desc">AI-наставник, детальный прогноз, расширенная аналитика</div>
+        </div>
+        <button onclick="openModal('pro-modal')">Перейти</button>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="profile-section" onclick="showToast('Моя статистика')">
+          <div class="icon">📊</div>
+          <div class="content"><div class="title">Моя статистика</div><div class="desc">Отклики, просмотры резюме</div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="profile-section" onclick="showToast('История действий')">
+          <div class="icon">📜</div>
+          <div class="content"><div class="title">История действий</div><div class="desc">Gap-анализы, просмотренные вакансии</div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="profile-section" onclick="showToast('Настройки уведомлений')">
+          <div class="icon">🔔</div>
+          <div class="content"><div class="title">Уведомления</div><div class="desc">Push, email</div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="profile-section">
+          <div class="icon">🌙</div>
+          <div class="content"><div class="title">Тёмная тема</div><div class="desc">Переключить оформление</div></div>
+          <div class="toggle" id="theme-toggle" onclick="toggleTheme()"></div>
+        </div>
+        <div class="profile-section" onclick="showToast('Безопасность')">
+          <div class="icon">🔒</div>
+          <div class="content"><div class="title">Безопасность</div><div class="desc">Смена пароля, 2FA</div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="profile-section" onclick="openModal('test-modal')">
+          <div class="icon">❓</div>
+          <div class="content"><div class="title">Помощь / FAQ</div><div class="desc">Ответы на вопросы</div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="profile-section" onclick="logout()">
+          <div class="icon">🚪</div>
+          <div class="content"><div class="title" style="color:#DC2626;">Выйти из аккаунта</div></div>
+          <div class="arrow">›</div>
+        </div>
+      </div>
+
+      <p class="text-secondary" style="text-align:center; margin: 20px 0; font-size:12px;">
+        Версия 1.0.0 • <a href="#" style="color:var(--primary);">Пользовательское соглашение</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="navTo('home')">
+      <span class="icon">🏠</span>
+      <span>Главная</span>
+    </button>
+    <button class="nav-item" onclick="navTo('resume')">
+      <span class="icon">📄</span>
+      <span>Резюме</span>
+    </button>
+    <button class="nav-item" onclick="navTo('analytics')">
+      <span class="icon">📊</span>
+      <span>Аналитика</span>
+    </button>
+    <button class="nav-item" onclick="navTo('vacancies')">
+      <span class="icon">💼</span>
+      <span>Вакансии</span>
+    </button>
+    <button class="nav-item" onclick="navTo('profile')">
+      <span class="icon">👤</span>
+      <span>Профиль</span>
+    </button>
+  </nav>
+
+  <!-- MODALS -->
+  <!-- Test Modal -->
+  <div class="modal-overlay" id="test-modal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><div class="modal-title">Профориентационный тест</div><div class="modal-close" onclick="closeModalById('test-modal')">×</div></div>
+      <div id="test-content">
+        <div style="margin-bottom:16px;"><span class="text-secondary">Вопрос 1 из 5</span><div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:20%"></div></div></div>
+        <div style="font-weight:600; margin-bottom:14px; font-size:16px;">Что вам больше нравится?</div>
+        <div class="test-option" onclick="selectTestOption(this)"><div class="opt-letter">A</div><div>Работать с данными и искать закономерности</div></div>
+        <div class="test-option" onclick="selectTestOption(this)"><div class="opt-letter">B</div><div>Создавать визуальные интерфейсы</div></div>
+        <div class="test-option" onclick="selectTestOption(this)"><div class="opt-letter">C</div><div>Писать программы и автоматизировать процессы</div></div>
+        <div class="test-option" onclick="selectTestOption(this)"><div class="opt-letter">D</div><div>Управлять проектами и командами</div></div>
+        <button class="btn" style="margin-top:16px;" onclick="showTestResult()">Далее</button>
+      </div>
+      <div id="test-result" style="display:none;">
+        <div style="text-align:center; padding: 20px 0;">
+          <div style="font-size:48px; margin-bottom:10px;">🎯</div>
+          <div style="font-weight:700; font-size:18px; margin-bottom:8px;">Вам подходят профессии:</div>
+          <div style="font-size:16px; color:var(--primary); font-weight:700; margin-bottom:6px;">Аналитик данных</div>
+          <div style="font-size:16px; color:var(--primary); font-weight:700; margin-bottom:16px;">Project Manager</div>
+          <p class="text-secondary" style="font-size:14px; margin-bottom:20px;">На основе ваших ответов мы подобрали направления с высоким потенциалом развития.</p>
+          <button class="btn" onclick="closeModalById('test-modal')">Сохранить в профиль</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pro Modal -->
+  <div class="modal-overlay" id="pro-modal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><div class="modal-title">ПроКомпас Pro</div><div class="modal-close" onclick="closeModalById('pro-modal')">×</div></div>
+      <div style="text-align:center; margin-bottom:20px;">
+        <div style="font-size:48px;">⭐</div>
+        <div style="font-weight:700; font-size:20px; margin: 8px 0;">Раскройте весь потенциал</div>
+      </div>
+      <div class="card-flat" style="margin-bottom:10px;">
+        <div style="font-weight:600;">🤖 AI-наставник</div>
+        <div class="text-secondary" style="font-size:13px;">Персональные советы по развитию карьеры 24/7</div>
+      </div>
+      <div class="card-flat" style="margin-bottom:10px;">
+        <div style="font-weight:600;">📈 Детальный прогноз зарплаты</div>
+        <div class="text-secondary" style="font-size:13px;">Моделирование дохода с учётом всех навыков</div>
+      </div>
+      <div class="card-flat" style="margin-bottom:20px;">
+        <div style="font-weight:600;">📊 Расширенная аналитика</div>
+        <div class="text-secondary" style="font-size:13px;">Сравнение с рынком по 50+ параметрам</div>
+      </div>
+      <div style="text-align:center; margin-bottom:16px;">
+        <div style="font-size:28px; font-weight:700;">9.99 BYN<span style="font-size:14px; color:var(--text-secondary); font-weight:400;">/мес</span></div>
+      </div>
+      <button class="btn" onclick="showToast('Переход к оплате...')">Оформить подписку</button>
+      <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModalById('pro-modal')">Не сейчас</button>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="upload-modal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><div class="modal-title">Загрузка резюме</div><div class="modal-close" onclick="closeModalById('upload-modal')">×</div></div>
+      <div class="upload-zone" id="modal-upload-zone" onclick="simulateModalUpload()">
+        <div class="upload-icon">📎</div>
+        <div style="font-weight:600; margin-bottom:4px;">Нажмите или перетащите файл</div>
+        <div style="font-size:13px; color:var(--text-secondary);">PDF, DOCX до 10 МБ</div>
+      </div>
+      <div id="upload-progress" style="display:none; text-align:center; padding: 20px 0;">
+        <div style="font-size:32px; margin-bottom:10px;">⏳</div>
+        <div style="font-weight:600; margin-bottom:8px;">Анализируем...</div>
+        <div class="progress-bar"><div class="progress-fill" id="upload-bar" style="width:0%"></div></div>
+      </div>
+      <button class="btn btn-outline" style="margin-top:8px;" onclick="closeModalById('upload-modal')">Отмена</button>
+    </div>
+  </div>
+
+  <!-- Salary Forecast Modal -->
+  <div class="modal-overlay" id="salary-modal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><div class="modal-title">Прогноз роста зарплаты</div><div class="modal-close" onclick="closeModalById('salary-modal')">×</div></div>
+      <div class="slider-wrap">
+        <div class="slider-label"><span>Опыт (лет)</span><span id="exp-value">2</span></div>
+        <input type="range" min="0" max="10" value="2" oninput="document.getElementById('exp-value').innerText=this.value; updateSalaryForecast()">
+      </div>
+      <label class="label">Целевая позиция</label>
+      <select class="input" id="forecast-position" onchange="updateSalaryForecast()" style="margin-bottom:16px;">
+        <option>Junior Python Developer</option>
+        <option>Middle Python Developer</option>
+        <option>Senior Python Developer</option>
+      </select>
+      <div class="card" style="background:rgba(42,157,143,0.08); text-align:center;">
+        <div class="text-secondary" style="font-size:13px; margin-bottom:6px;">Прогнозируемая зарплата</div>
+        <div style="font-size:32px; font-weight:700; color:var(--primary);" id="forecast-salary">2500 BYN</div>
+        <div style="font-size:14px; color:var(--text-secondary); margin-top:6px;" id="forecast-hint">При добавлении навыков Docker и CI/CD +40%</div>
+      </div>
+      <button class="btn" style="margin-top:16px;" onclick="closeModalById('salary-modal')">Понятно</button>
+    </div>
+  </div>
+
+  <!-- Courses Modal -->
+  <div class="modal-overlay" id="courses-modal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><div class="modal-title">Рекомендуемые курсы</div><div class="modal-close" onclick="closeModalById('courses-modal')">×</div></div>
+      <div class="card-flat" style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-weight:700;">Docker для начинающих</div>
+            <div class="text-secondary" style="font-size:13px;">Stepik • Бесплатно</div>
+            <div style="margin-top:6px; font-size:13px;">⭐ 4.8 (2.3k отзывов)</div>
+          </div>
+          <button class="btn btn-xs" onclick="showToast('Переход к курсу')">Перейти</button>
+        </div>
+      </div>
+      <div class="card-flat" style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-weight:700;">CI/CD на GitLab</div>
+            <div class="text-secondary" style="font-size:13px;">Coursera • Платно</div>
+            <div style="margin-top:6px; font-size:13px;">⭐ 4.6 (890 отзывов)</div>
+          </div>
+          <button class="btn btn-xs" onclick="showToast('Переход к курсу')">Перейти</button>
+        </div>
+      </div>
+      <div class="card-flat">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-weight:700;">Kubernetes basics</div>
+            <div class="text-secondary" style="font-size:13px;">Udemy • Платно</div>
+            <div style="margin-top:6px; font-size:13px;">⭐ 4.7 (1.5k отзывов)</div>
+          </div>
+          <button class="btn btn-xs" onclick="showToast('Переход к курсу')">Перейти</button>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="margin-top:16px;" onclick="closeModalById('courses-modal')">Закрыть</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // State
+  let obStep = 1, selectedRole = null;
+  const screens = ['home','resume','analytics','vacancies','profile'];
+
+  // Init
+  window.onload = () => {
+    const done = localStorage.getItem('prokompas_onboarding');
+    if (!done) {
+      document.getElementById('onboarding').style.display = 'flex';
+    }
+    const name = localStorage.getItem('prokompas_name');
+    if (name) {
+      document.getElementById('greeting').innerText = 'Здравствуйте, ' + name + '!';
+      document.getElementById('profile-name').innerText = name;
+      document.getElementById('input-name').value = name;
+    }
+    if (localStorage.getItem('prokompas_dark') === '1') {
+      document.body.classList.add('dark-theme');
+      document.getElementById('theme-toggle').classList.add('on');
+    }
+  };
+
+  // Onboarding
+  function selectRole(role) {
+    selectedRole = role;
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    document.querySelector('[data-role="'+role+'"]').classList.add('selected');
+    document.getElementById('ob-btn').disabled = false;
+  }
+  function nextObStep() {
+    if (obStep === 1) {
+      if (!selectedRole) return;
+      document.getElementById('goals-student').style.display = selectedRole==='student'?'block':'none';
+      document.getElementById('goals-specialist').style.display = selectedRole==='specialist'?'block':'none';
+    }
+    if (obStep === 2) {
+      // save goals if needed
+    }
+    if (obStep === 3) {
+      if (!document.getElementById('consent-check').checked) {
+        showToast('Необходимо согласие на обработку данных'); return;
+      }
+      localStorage.setItem('prokompas_onboarding','1');
+      localStorage.setItem('prokompas_role', selectedRole);
+      document.getElementById('onboarding').style.display = 'none';
+      return;
+    }
+    document.getElementById('ob-step-'+obStep).classList.remove('active');
+    obStep++;
+    document.getElementById('ob-step-'+obStep).classList.add('active');
+    for (let i=1;i<=3;i++) document.getElementById('dot-'+i).classList.toggle('active', i===obStep);
+    document.getElementById('ob-btn').innerText = obStep===3 ? 'Начать использовать' : 'Далее';
+    document.getElementById('ob-btn').disabled = obStep===3;
+  }
+  function simulateUpload() {
+    const zone = document.getElementById('upload-zone');
+    zone.classList.add('active');
+    zone.innerHTML = '<div style="font-size:32px;">✅</div><div style="font-weight:600;">Резюме загружено</div><div style="font-size:13px;">Анализируем...</div>';
+    setTimeout(() => {
+      document.getElementById('consent-check').checked = true;
+      showToast('Анализ завершён! Данные извлечены.');
+    }, 1200);
+  }
+  function skipUpload() {
+    document.getElementById('consent-check').checked = true;
+    nextObStep();
+  }
+
+  // Navigation
+  function navTo(screenName, subtab) {
+    screens.forEach(s => {
+      document.getElementById('screen-'+s).classList.toggle('active', s===screenName);
+    });
+    document.querySelectorAll('.nav-item').forEach((btn, idx) => {
+      btn.classList.toggle('active', screens[idx]===screenName);
+    });
+    if (screenName==='resume' && subtab==='gap') {
+      switchResumeTab('gap');
+    }
+    window.scrollTo(0,0);
+  }
+
+  // Resume tabs
+  function switchResumeTab(tab) {
+    document.getElementById('tab-constructor').style.display = tab==='constructor'?'block':'none';
+    document.getElementById('tab-gap').style.display = tab==='gap'?'block':'none';
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      const isTarget = b.dataset.tab === tab;
+      b.classList.toggle('btn-outline', !isTarget);
+    });
+  }
+
+  // Accordion
+  function toggleAccordion(header) {
+    const item = header.parentElement;
+    const body = header.nextElementSibling;
+    item.classList.toggle('open');
+    body.classList.toggle('open');
+  }
+
+  // Skills chips
+  function addSkill() {
+    const input = document.getElementById('skill-input');
+    const val = input.value.trim();
+    if (!val) return;
+    const container = document.getElementById('skills-container');
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = val + ' <span class="chip-close" onclick="removeSkill(this)">×</span>';
+    container.appendChild(chip);
+    input.value = '';
+  }
+  function removeSkill(el) {
+    el.parentElement.remove();
+  }
+
+  // Experience
+  function addExperience() {
+    const list = document.getElementById('experience-list');
+    const div = document.createElement('div');
+    div.className = 'card-flat';
+    div.style.marginBottom = '10px';
+    div.innerHTML = `
+      <input class="input" placeholder="Компания" style="margin-top:0;">
+      <input class="input" placeholder="Период (мм/гггг — мм/гггг)">
+      <input class="input" placeholder="Должность">
+      <textarea class="input" rows="2" placeholder="Описание"></textarea>
+      <button class="btn btn-ghost" style="padding:4px 0; margin-top:4px; color:#DC2626; width:auto; font-size:13px;" onclick="this.parentElement.remove()">Удалить</button>
+    `;
+    list.appendChild(div);
+  }
+
+  // Gap Analysis
+  function runGapAnalysis() {
+    document.getElementById('gap-results').style.display = 'block';
+    const pct = Math.floor(Math.random()*30+50);
+    document.getElementById('gap-percent').innerText = pct+'%';
+    const circle = document.getElementById('gap-circle-you');
+    const r = 70, c = 2*Math.PI*r;
+    const dash = (pct/100)*c;
+    circle.setAttribute('stroke-dasharray', dash+' '+c);
+    // Animate
+    setTimeout(() => {
+      document.getElementById('gap-results').scrollIntoView({behavior:'smooth', block:'start'});
+    }, 100);
+  }
+
+  // Salary forecast
+  function updateSalaryForecast() {
+    const exp = parseInt(document.querySelector('#salary-modal input[type=range]').value);
+    const pos = document.getElementById('forecast-position').value;
+    let base = 1500;
+    if (pos.includes('Junior')) base = 1500;
+    if (pos.includes('Middle')) base = 3500;
+    if (pos.includes('Senior')) base = 6000;
+    const salary = base + exp*300;
+    document.getElementById('forecast-salary').innerText = salary + ' BYN';
+  }
+
+  // Profile
+  function updateName() {
+    const val = document.getElementById('input-name').value;
+    document.getElementById('profile-name').innerText = val || 'Гость';
+    document.getElementById('greeting').innerText = 'Здравствуйте, ' + (val || 'Гость') + '!';
+    localStorage.setItem('prokompas_name', val);
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+    const on = document.body.classList.contains('dark-theme');
+    document.getElementById('theme-toggle').classList.toggle('on', on);
+    localStorage.setItem('prokompas_dark', on?'1':'0');
+  }
+  function logout() {
+    localStorage.clear();
+    showToast('Вы вышли из аккаунта');
+    setTimeout(() => location.reload(), 800);
+  }
+
+  // Modals
+  function openModal(id) {
+    document.getElementById(id).classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModalById(id) {
+    document.getElementById(id).classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  function closeModal(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Test
+  function selectTestOption(el) {
+    el.parentElement.querySelectorAll('.test-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function showTestResult() {
+    document.getElementById('test-content').style.display = 'none';
+    document.getElementById('test-result').style.display = 'block';
+  }
+
+  // Upload modal simulation
+  function simulateModalUpload() {
+    const zone = document.getElementById('modal-upload-zone');
+    const progress = document.getElementById('upload-progress');
+    const bar = document.getElementById('upload-bar');
+    zone.style.display = 'none';
+    progress.style.display = 'block';
+    let w = 0;
+    const interval = setInterval(() => {
+      w += 10;
+      bar.style.width = w+'%';
+      if (w >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          showToast('Резюме проанализировано и заполнено!');
+          closeModalById('upload-modal');
+          zone.style.display = 'block';
+          progress.style.display = 'none';
+          bar.style.width = '0%';
+        }, 400);
+      }
+    }, 150);
+  }
+
+  // Toast
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // Filter chips
+  document.querySelectorAll('.filter-chips').forEach(container => {
+    container.addEventListener('click', e => {
+      const chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+      container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
